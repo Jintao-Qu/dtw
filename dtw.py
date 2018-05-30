@@ -12,13 +12,71 @@ def dtw(x, y, dist, warp=1):
     :param int warp: how many shifts are computed.
     Returns the minimum distance, the cost matrix, the accumulated cost matrix, and the wrap path.
     """
+    
+    """
+        example:
+            x=array([2,1,4,7,4,8,3,6,4,7]).reshape(-1,1)
+            y=array([6,5,5,3,6]).reshape(-1,1)    
+    """
     assert len(x)  # assert expression [, arguments]
     assert len(y)
+   
+
     r, c = len(x), len(y)
-    D0 = zeros((r + 1, c + 1)) # 
+    """
+        r=10,c=5
+    """
+    
+    
+    D0 = zeros((r + 1, c + 1)) 
+    """
+       D0=
+        [[0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]]
+    """
+    
+    
     D0[0, 1:] = inf
     D0[1:, 0] = inf
+    """
+       D0=
+        [[ 0. inf inf inf inf inf]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]
+         [inf  0.  0.  0.  0.  0.]]
+    """
+    
+    
     D1 = D0[1:, 1:]  # view
+    """
+       D1=
+        [[0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0.]]
+    """
     for i in range(r):
         for j in range(c):
             D1[i, j] = dist(x[i], y[j])
