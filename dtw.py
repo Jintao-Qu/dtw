@@ -63,7 +63,7 @@ def dtw(x, y, dist, warp=1):
     """
     
     
-    D1 = D0[1:, 1:]  # view
+    D1 = D0[1:, 1:]  # view #shallow copy
     """
        D1=
         [[0. 0. 0. 0. 0.]
@@ -80,22 +80,57 @@ def dtw(x, y, dist, warp=1):
     for i in range(r):
         for j in range(c):
             D1[i, j] = dist(x[i], y[j])
-    C = D1.copy()
+    """
+        D1=
+        [[4. 3. 3. 1. 4.]
+         [5. 4. 4. 2. 5.]
+         [2. 1. 1. 1. 2.]
+         [1. 2. 2. 4. 1.]
+         [2. 1. 1. 1. 2.]
+         [2. 3. 3. 5. 2.]
+         [3. 2. 2. 0. 3.]
+         [0. 1. 1. 3. 0.]
+         [2. 1. 1. 1. 2.]
+         [1. 2. 2. 4. 1.]]
+         D0=
+         [[ 0. inf inf inf inf inf]
+          [inf  4.  3.  3.  1.  4.]
+          [inf  5.  4.  4.  2.  5.]
+          [inf  2.  1.  1.  1.  2.]
+          [inf  1.  2.  2.  4.  1.]
+          [inf  2.  1.  1.  1.  2.]
+          [inf  2.  3.  3.  5.  2.]
+          [inf  3.  2.  2.  0.  3.]
+          [inf  0.  1.  1.  3.  0.]
+          [inf  2.  1.  1.  1.  2.]
+          [inf  1.  2.  2.  4.  1.]]
+    """
+    C = D1.copy() #deep copy
     for i in range(r):
         for j in range(c):
             min_list = [D0[i, j]]
             for k in range(1, warp + 1):
-                i_k = min(i + k, r - 1)
+                i_k = min(i + k, r - 1)#the biggest index = r-1.
                 j_k = min(j + k, c - 1)
-                min_list += [D0[i_k, j], D0[i, j_k]]
-            D1[i, j] += min(min_list)
+                min_list += [D0[i_k, j], D0[i, j_k]] #3 data item in min_list
+            D1[i, j] += min(min_list) #D1[i,j]+=the minimum data item
     if len(x)==1:
         path = zeros(len(y)), range(len(y))
+        """
+        0
+        0
+        0
+        ..
+        ..
+        """
     elif len(y) == 1:
         path = range(len(x)), zeros(len(x))
+        """
+        0 0 0 .. ..
+        """
     else:
         path = _traceback(D0)
-    return D1[-1, -1] / sum(D1.shape), C, D1, path
+    return D1[-1, -1] / sum(D1.shape), C, D1, path  #D1.shape=(10,5)
 
 
 def fastdtw(x, y, dist, warp=1):
@@ -141,10 +176,24 @@ def fastdtw(x, y, dist, warp=1):
 
 
 def _traceback(D):
-    i, j = array(D.shape) - 2
-    p, q = [i], [j]
+    """
+     D0=
+         [[ 0. inf inf inf inf inf]
+          [inf  4.  3.  3.  1.  4.]
+          [inf  5.  4.  4.  2.  5.]
+          [inf  2.  1.  1.  1.  2.]
+          [inf  1.  2.  2.  4.  1.]
+          [inf  2.  1.  1.  1.  2.]
+          [inf  2.  3.  3.  5.  2.]
+          [inf  3.  2.  2.  0.  3.]
+          [inf  0.  1.  1.  3.  0.]
+          [inf  2.  1.  1.  1.  2.]
+          [inf  1.  2.  2.  4.  1.]]
+    """
+    i, j = array(D.shape) - 2 # D.shape=(11,6) array(D.shape)=[11 6]  array(D.shape)-2=[9 4]
+    p, q = [i], [j] # p=[9] q=[4]
     while (i > 0) or (j > 0):
-        tb = argmin((D[i, j], D[i, j+1], D[i+1, j]))
+        tb = argmin((D[i, j], D[i, j+1], D[i+1, j])) # return an index of the first minmum data item 
         if tb == 0:
             i -= 1
             j -= 1
